@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2f5d3a" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Meal Coach" />
+<title>Meal Coach — Your Daily Diet Companion</title>
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232f5d3a'/><text x='32' y='44' font-family='serif' font-size='38' font-weight='700' text-anchor='middle' fill='white'>M</text></svg>" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%232f5d3a'/><text x='90' y='125' font-family='serif' font-size='108' font-weight='700' text-anchor='middle' fill='white'>M</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --bg-card: #ffffff;
+    --ink: #1c2520;
+    --ink-soft: #5b6660;
+    --line: #e5dfd3;
+    --primary: #2f5d3a;
+    --primary-dark: #1f3f27;
+    --primary-soft: #e8f0e7;
+    --accent: #d96a3a;
+    --accent-soft: #fbe7dc;
+    --warn: #b97400;
+    --warn-soft: #fff1d6;
+    --bad: #b3361f;
+    --bad-soft: #fbe1dc;
+    --good: #2f7d4a;
+    --good-soft: #def0e2;
+    --shadow: 0 1px 2px rgba(28,37,32,0.04), 0 8px 24px rgba(28,37,32,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  button { -webkit-appearance: none; appearance: none; }
+  .display { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.02em; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+  @media (max-width: 600px) {
+    .container { padding: 18px 14px 60px; }
+  }
+
+  /* Header */
+  header.app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px;
+  }
+  .brand h1 { font-size: 22px; margin: 0; font-family: 'Fraunces', serif; font-weight: 600; }
+  .brand .sub { font-size: 12px; color: var(--ink-soft); margin-top: -2px; }
+
+  .header-actions { display: flex; gap: 8px; }
+  .btn {
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    color: var(--ink);
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all .15s;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  .btn:hover { border-color: var(--ink-soft); }
+  .btn-primary {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+  .btn-accent {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .btn-accent:hover { background: #b85a30; border-color: #b85a30; }
+  .btn-ghost { background: transparent; border-color: transparent; }
+  .btn-ghost:hover { background: var(--bg-card); border-color: var(--line); }
+
+  /* Setup screen */
+  .setup-wrap { max-width: 640px; margin: 0 auto; }
+  .setup-hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .setup-hero h2 { font-size: 36px; margin: 0 0 10px; font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.02em; }
+  .setup-hero p { color: var(--ink-soft); margin: 0; font-size: 16px; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .card + .card { margin-top: 18px; }
+
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+  label.lbl {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .hint { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 16px; /* 16px+ prevents iOS auto-zoom on focus */
+    background: #fdfbf6;
+    color: var(--ink);
+    transition: border .15s, background .15s;
+    min-height: 44px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary); background: #fff;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 540px) {
+    .row { grid-template-columns: 1fr; }
+    /* keep height ft/in side-by-side, age full-width below */
+    .row-3 { grid-template-columns: 1fr 1fr; }
+    .row-3 .field:nth-child(3) { grid-column: 1 / -1; }
+  }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center;
+    padding: 7px 13px;
+    border: 1px solid var(--line); border-radius: 999px;
+    font-size: 13px; cursor: pointer; user-select: none;
+    background: #fdfbf6;
+    transition: all .12s;
+  }
+  .chip:hover { border-color: var(--ink-soft); }
+  .chip.active {
+    background: var(--primary); border-color: var(--primary); color: #fff;
+  }
+
+  /* Dashboard */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+  }
+  @media (max-width: 880px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .row, .row-3 { grid-template-columns: 1fr; }
+  }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  @media (max-width: 720px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat .label { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+  .stat .val { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; margin-top: 4px; line-height: 1.1; }
+  @media (max-width: 540px) {
+    .stat { padding: 14px; }
+    .stat .val { font-size: 24px; }
+    .stat .label { font-size: 11px; }
+    .meal-card { padding: 16px; }
+    .card { padding: 22px 18px; }
+    .setup-hero h2 { font-size: 28px; }
+    header.app-header { margin-bottom: 16px; }
+    .brand h1 { font-size: 18px; }
+    .brand .sub { font-size: 11px; }
+    .stats-row { gap: 10px; margin-bottom: 16px; }
+  }
+  .stat .delta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .stat.accent .val { color: var(--accent); }
+  .stat.primary .val { color: var(--primary); }
+
+  /* Progress ring */
+  .ring-card {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ring {
+    --pct: 0;
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) calc(var(--pct) * 1%), var(--primary-soft) 0);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; flex-shrink: 0;
+  }
+  .ring::before {
+    content: ''; position: absolute; inset: 10px;
+    background: var(--bg-card); border-radius: 50%;
+  }
+  .ring-inner {
+    position: relative; text-align: center;
+  }
+  .ring-inner .big { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; line-height: 1; }
+  .ring-inner .small { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+  /* Meal slots */
+  .meal-card {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 20px; margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .meal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .meal-title { display: flex; align-items: center; gap: 10px; }
+  .meal-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--primary-soft); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .meal-title h3 { margin: 0; font-size: 17px; font-family: 'Fraunces', serif; font-weight: 600; }
+  .meal-title .target { font-size: 12px; color: var(--ink-soft); }
+  .meal-input-row {
+    display: flex; gap: 8px;
+  }
+  .meal-input-row input { flex: 1; min-width: 0; }
+  @media (max-width: 540px) {
+    .meal-input-row { flex-direction: column; }
+    .meal-input-row .btn { width: 100%; }
+  }
+  .meal-result { margin-top: 14px; }
+  .meal-eaten {
+    background: var(--primary-soft);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 10px;
+  }
+  .meal-eaten .name { font-weight: 500; }
+  .meal-eaten .cal { color: var(--primary); font-weight: 600; }
+
+  /* Verdict pills */
+  .verdict {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: 12px;
+    font-size: 14px; line-height: 1.5;
+  }
+  .verdict.good { background: var(--good-soft); color: var(--good); border: 1px solid #c6e0cc; }
+  .verdict.warn { background: var(--warn-soft); color: var(--warn); border: 1px solid #f0dca0; }
+  .verdict.bad { background: var(--bad-soft); color: var(--bad); border: 1px solid #f0c9c0; }
+  .verdict .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .verdict strong { display: block; margin-bottom: 2px; }
+
+  .suggestions { margin-top: 10px; }
+  .suggestion-title { font-size: 12px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .suggestion-list { display: grid; gap: 8px; }
+  .suggestion {
+    background: #fdfbf6;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 13px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .suggestion:hover { border-color: var(--primary); background: var(--primary-soft); }
+  .suggestion .s-name { font-weight: 500; }
+  .suggestion .s-cal { color: var(--ink-soft); font-size: 12px; }
+
+  /* Exercise */
+  .exercise-card .ex-options { display: grid; gap: 10px; margin-top: 10px; }
+  .ex-option {
+    background: #fdfbf6;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid; grid-template-columns: 36px 1fr auto; gap: 12px;
+    align-items: center;
+  }
+  .ex-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .ex-name { font-weight: 600; font-size: 14px; }
+  .ex-detail { font-size: 12px; color: var(--ink-soft); }
+  .ex-burn { font-family: 'Fraunces', serif; font-weight: 600; color: var(--accent); font-size: 18px; }
+  .ex-log-row { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 8px; }
+  @media (max-width: 540px) {
+    .ex-log-row { grid-template-columns: 1fr 1fr; }
+    .ex-log-row .btn { grid-column: 1 / -1; }
+  }
+
+  /* Side panel */
+  .side-card {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .side-card + .side-card { margin-top: 16px; }
+  .side-card h3 { margin: 0 0 12px; font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+
+  .progress-bar { background: var(--primary-soft); border-radius: 999px; height: 10px; overflow: hidden; }
+  .progress-fill { background: var(--primary); height: 100%; border-radius: 999px; transition: width .4s; }
+  .weight-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+  .small-input { display: flex; gap: 6px; }
+  .small-input input { flex: 1; font-size: 14px; padding: 8px 10px; }
+
+  .info-line { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+  .info-line:last-child { border-bottom: none; }
+  .info-line .k { color: var(--ink-soft); }
+  .info-line .v { font-weight: 600; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff;
+    padding: 12px 20px; border-radius: 10px;
+    font-size: 14px; z-index: 100;
+    opacity: 0; transition: opacity .2s, transform .2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  /* hidden */
+  .hidden { display: none !important; }
+
+  /* footer note */
+  .footnote {
+    text-align: center; font-size: 12px; color: var(--ink-soft); margin-top: 28px;
+    line-height: 1.5;
+  }
+  .footnote a { color: var(--primary); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- =================== SETUP =================== -->
+  <section id="setup-screen" class="setup-wrap">
+    <div class="setup-hero">
+      <h2>Welcome to Meal Coach</h2>
+      <p>Your daily diet companion. Tell us a bit about you, and we'll build your plan.</p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="field">
+          <label class="lbl">Current weight (lbs)</label>
+          <input type="number" id="s-current" min="60" max="600" step="0.1" placeholder="e.g. 185" />
+        </div>
+        <div class="field">
+          <label class="lbl">Goal weight (lbs)</label>
+          <input type="number" id="s-goal" min="60" max="600" step="0.1" placeholder="e.g. 165" />
+        </div>
+      </div>
+
+      <div class="row-3">
+        <div class="field">
+          <label class="lbl">Height — feet</label>
+          <input type="number" id="s-ft" min="3" max="8" placeholder="5" />
+        </div>
+        <div class="field">
+          <label class="lbl">Height — inches</label>
+          <input type="number" id="s-in" min="0" max="11" placeholder="10" />
+        </div>
+        <div class="field">
+          <label class="lbl">Age</label>
+          <input type="number" id="s-age" min="13" max="100" placeholder="30" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Sex (for calorie calculation)</label>
+        <div class="chip-row" id="s-sex">
+          <div class="chip active" data-val="male">Male</div>
+          <div class="chip" data-val="female">Female</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Activity outside of planned walks/runs</label>
+        <div class="chip-row" id="s-activity">
+          <div class="chip active" data-val="1.2">Sedentary</div>
+          <div class="chip" data-val="1.375">Light</div>
+          <div class="chip" data-val="1.55">Moderate</div>
+          <div class="chip" data-val="1.725">Very active</div>
+        </div>
+        <div class="hint">Sedentary = mostly seated. Light = some walking. Moderate = on feet often. Very = physical job/training.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Pace of weight change</label>
+        <div class="chip-row" id="s-pace">
+          <div class="chip" data-val="0.5">Easy (~0.5 lb / week)</div>
+          <div class="chip active" data-val="1">Steady (~1 lb / week)</div>
+          <div class="chip" data-val="1.5">Aggressive (~1.5 lb / week)</div>
+        </div>
+        <div class="hint">Direction (loss/gain) is set automatically based on current vs goal weight.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Dietary restrictions</label>
+        <div class="chip-row" id="s-restrictions">
+          <div class="chip active" data-val="dairy">No dairy</div>
+          <div class="chip active" data-val="pork">No pork</div>
+          <div class="chip" data-val="vegetarian">Vegetarian</div>
+          <div class="chip" data-val="vegan">Vegan</div>
+          <div class="chip" data-val="gluten">Gluten-free</div>
+          <div class="chip" data-val="shellfish">No shellfish</div>
+          <div class="chip" data-val="nuts">No nuts</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Other notes (optional)</label>
+        <textarea id="s-notes" placeholder="e.g. I'm trying to eat more protein, I usually skip breakfast..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="s-save" style="width:100%; padding: 13px; margin-top: 10px; font-size: 15px;">Build my plan →</button>
+    </div>
+
+    <p class="footnote">Meal Coach gives general nutrition guidance. It is not a substitute for advice from a doctor or registered dietitian.</p>
+  </section>
+
+  <!-- =================== DASHBOARD =================== -->
+  <section id="dashboard" class="hidden">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          <h1>Meal Coach</h1>
+          <div class="sub" id="d-greeting">Good morning</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="reset-day">Reset day</button>
+        <button class="btn" id="edit-profile">Edit profile</button>
+      </div>
+    </header>
+
+    <div class="stats-row">
+      <div class="stat primary">
+        <div class="label">Daily target</div>
+        <div class="val"><span id="d-target">—</span></div>
+        <div class="delta">calories</div>
+      </div>
+      <div class="stat">
+        <div class="label">Eaten today</div>
+        <div class="val"><span id="d-eaten">0</span></div>
+        <div class="delta" id="d-eaten-pct">0% of target</div>
+      </div>
+      <div class="stat accent">
+        <div class="label">Burned today</div>
+        <div class="val"><span id="d-burned">0</span></div>
+        <div class="delta">from logged exercise</div>
+      </div>
+      <div class="stat">
+        <div class="label">Remaining</div>
+        <div class="val"><span id="d-remaining">—</span></div>
+        <div class="delta" id="d-remaining-note">to hit target</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div>
+        <!-- MEAL SLOTS -->
+        <div class="meal-card" data-meal="breakfast">
+          <div class="meal-head">
+            <div class="meal-title">
+              <div class="meal-icon">☀</div>
+              <div>
+                <h3>Breakfast</h3>
+                <div class="target">Target: <span class="meal-target">—</span> cal</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost meal-clear" title="Clear">Clear</button>
+          </div>
+          <div class="meal-input-row">
+            <input type="text" class="meal-input" placeholder="e.g. 2 scrambled eggs and avocado toast" />
+            <button class="btn btn-primary meal-check">Check it</button>
+          </div>
+          <div class="meal-result"></div>
+        </div>
+
+        <div class="meal-card" data-meal="lunch">
+          <div class="meal-head">
+            <div class="meal-title">
+              <div class="meal-icon">🥗</div>
+              <div>
+                <h3>Lunch</h3>
+                <div class="target">Target: <span class="meal-target">—</span> cal</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost meal-clear" title="Clear">Clear</button>
+          </div>
+          <div class="meal-input-row">
+            <input type="text" class="meal-input" placeholder="e.g. grilled chicken salad" />
+            <button class="btn btn-primary meal-check">Check it</button>
+          </div>
+          <div class="meal-result"></div>
+        </div>
+
+        <div class="meal-card" data-meal="dinner">
+          <div class="meal-head">
+            <div class="meal-title">
+              <div class="meal-icon">🍽</div>
+              <div>
+                <h3>Dinner</h3>
+                <div class="target">Target: <span class="meal-target">—</span> cal</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost meal-clear" title="Clear">Clear</button>
+          </div>
+          <div class="meal-input-row">
+            <input type="text" class="meal-input" placeholder="e.g. salmon with quinoa and broccoli" />
+            <button class="btn btn-primary meal-check">Check it</button>
+          </div>
+          <div class="meal-result"></div>
+        </div>
+
+        <div class="meal-card" data-meal="snack">
+          <div class="meal-head">
+            <div class="meal-title">
+              <div class="meal-icon">🍎</div>
+              <div>
+                <h3>Snack</h3>
+                <div class="target">Target: <span class="meal-target">—</span> cal</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost meal-clear" title="Clear">Clear</button>
+          </div>
+          <div class="meal-input-row">
+            <input type="text" class="meal-input" placeholder="e.g. apple with almond butter" />
+            <button class="btn btn-primary meal-check">Check it</button>
+          </div>
+          <div class="meal-result"></div>
+        </div>
+
+        <!-- EXERCISE -->
+        <div class="meal-card exercise-card">
+          <div class="meal-head">
+            <div class="meal-title">
+              <div class="meal-icon" style="background: var(--accent-soft); color: var(--accent);">🏃</div>
+              <div>
+                <h3>Move today</h3>
+                <div class="target">Tailored to your weight & remaining calories</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost" id="ex-refresh">Refresh</button>
+          </div>
+          <div class="ex-options" id="ex-options"></div>
+          <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line);">
+            <label class="lbl">Log a custom workout</label>
+            <div class="ex-log-row">
+              <select id="ex-type">
+                <option value="walk-slow">Walk — slow (3 mph)</option>
+                <option value="walk-brisk" selected>Walk — brisk (4 mph)</option>
+                <option value="jog">Jog (5 mph)</option>
+                <option value="run">Run (6 mph)</option>
+                <option value="run-fast">Run — fast (7 mph)</option>
+                <option value="cycle">Cycle (moderate)</option>
+                <option value="strength">Strength training</option>
+              </select>
+              <input type="number" id="ex-minutes" placeholder="Minutes" min="1" max="300" />
+              <button class="btn btn-accent" id="ex-log">Log it</button>
+            </div>
+            <div id="ex-logged" style="margin-top: 10px;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SIDE PANEL -->
+      <aside>
+        <div class="side-card">
+          <h3>Weight progress</h3>
+          <div class="ring-card">
+            <div class="ring" id="weight-ring" style="--pct: 0;">
+              <div class="ring-inner">
+                <div class="big" id="ring-pct">0%</div>
+                <div class="small">to goal</div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div class="info-line"><span class="k">Current</span><span class="v"><span id="w-current">—</span> lb</span></div>
+              <div class="info-line"><span class="k">Goal</span><span class="v"><span id="w-goal">—</span> lb</span></div>
+              <div class="info-line"><span class="k">To go</span><span class="v"><span id="w-togo">—</span> lb</span></div>
+            </div>
+          </div>
+          <div style="margin-top: 14px;">
+            <label class="lbl">Log today's weight</label>
+            <div class="small-input">
+              <input type="number" id="w-input" min="60" max="600" step="0.1" placeholder="lbs" />
+              <button class="btn btn-primary" id="w-log">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <h3>Your numbers</h3>
+          <div class="info-line"><span class="k">BMR</span><span class="v"><span id="i-bmr">—</span> cal</span></div>
+          <div class="info-line"><span class="k">Maintenance</span><span class="v"><span id="i-tdee">—</span> cal</span></div>
+          <div class="info-line"><span class="k">Direction</span><span class="v" id="i-direction">—</span></div>
+          <div class="info-line"><span class="k">Daily deficit/surplus</span><span class="v" id="i-deficit">—</span></div>
+          <div class="info-line"><span class="k">ETA to goal</span><span class="v" id="i-eta">—</span></div>
+        </div>
+
+        <div class="side-card">
+          <h3>Tip of the day</h3>
+          <div id="tip-text" style="font-size: 14px; line-height: 1.6; color: var(--ink-soft);">—</div>
+        </div>
+      </aside>
+    </div>
+
+    <p class="footnote">Estimates use the Mifflin–St Jeor equation and standard MET values. Calorie estimates for meals are based on a built-in food database — adjust portion sizes if your actual meal differs. Always check with a doctor before starting a new diet or exercise plan.</p>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===============================================================
+   FOOD DATABASE
+   Each entry: keywords, calories per serving, serving description,
+   tags (dairy, pork, meat, vegetarian, vegan, gluten, shellfish, nuts)
+   =============================================================== */
+const FOODS = [
+  // Breakfast
+  { name: "Scrambled eggs (2 large)", keys: ["scrambled egg", "scrambled eggs", "eggs", "egg"], cal: 180, serving: "2 large", tags: [], meal: ["breakfast"] },
+  { name: "Boiled egg", keys: ["boiled egg", "hard boiled", "soft boiled"], cal: 78, serving: "1 large", tags: [], meal: ["breakfast","snack"] },
+  { name: "Omelette (plain, 2 eggs)", keys: ["omelet", "omelette"], cal: 220, serving: "2-egg", tags: [], meal: ["breakfast"] },
+  { name: "Oatmeal (1 cup cooked)", keys: ["oatmeal", "oats", "porridge"], cal: 165, serving: "1 cup cooked", tags: [], meal: ["breakfast"] },
+  { name: "Avocado toast (1 slice)", keys: ["avocado toast", "avo toast"], cal: 220, serving: "1 slice whole grain", tags: ["gluten"], meal: ["breakfast","lunch"] },
+  { name: "Greek yogurt (plain, 1 cup)", keys: ["greek yogurt", "yogurt"], cal: 130, serving: "1 cup", tags: ["dairy"], meal: ["breakfast","snack"] },
+  { name: "Pancakes (2 medium)", keys: ["pancake", "pancakes"], cal: 350, serving: "2 medium with syrup", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "Waffles (2)", keys: ["waffle", "waffles"], cal: 380, serving: "2 with syrup", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "French toast (2 slices)", keys: ["french toast"], cal: 360, serving: "2 slices", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "Bacon (pork, 3 strips)", keys: ["bacon"], cal: 130, serving: "3 strips", tags: ["pork","meat"], meal: ["breakfast"] },
+  { name: "Turkey bacon (3 strips)", keys: ["turkey bacon"], cal: 90, serving: "3 strips", tags: ["meat"], meal: ["breakfast"] },
+  { name: "Sausage (pork, 2 links)", keys: ["sausage", "breakfast sausage"], cal: 180, serving: "2 links", tags: ["pork","meat"], meal: ["breakfast"] },
+  { name: "Chicken sausage (2 links)", keys: ["chicken sausage"], cal: 140, serving: "2 links", tags: ["meat"], meal: ["breakfast"] },
+  { name: "Bagel with cream cheese", keys: ["bagel"], cal: 400, serving: "1 with cream cheese", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "Toast (1 slice, plain)", keys: ["toast", "bread"], cal: 80, serving: "1 slice", tags: ["gluten"], meal: ["breakfast","snack"] },
+  { name: "Cereal with milk", keys: ["cereal", "corn flakes", "cornflakes"], cal: 220, serving: "1 cup with milk", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "Smoothie (fruit, basic)", keys: ["smoothie"], cal: 280, serving: "16 oz fruit smoothie", tags: [], meal: ["breakfast","snack"] },
+  { name: "Banana", keys: ["banana"], cal: 105, serving: "1 medium", tags: [], meal: ["breakfast","snack"] },
+  { name: "Apple", keys: ["apple"], cal: 95, serving: "1 medium", tags: [], meal: ["snack","breakfast"] },
+  { name: "Berries (1 cup mixed)", keys: ["berries", "blueberries", "strawberries", "raspberries"], cal: 70, serving: "1 cup", tags: [], meal: ["breakfast","snack"] },
+  { name: "Orange", keys: ["orange"], cal: 65, serving: "1 medium", tags: [], meal: ["snack","breakfast"] },
+  { name: "Peanut butter (2 tbsp)", keys: ["peanut butter", "pb"], cal: 190, serving: "2 tbsp", tags: ["nuts"], meal: ["breakfast","snack"] },
+  { name: "Almond butter (2 tbsp)", keys: ["almond butter"], cal: 190, serving: "2 tbsp", tags: ["nuts"], meal: ["breakfast","snack"] },
+  { name: "Hash browns", keys: ["hash brown", "hash browns"], cal: 240, serving: "1 cup", tags: [], meal: ["breakfast"] },
+
+  // Lunch / Dinner — Proteins
+  { name: "Grilled chicken breast", keys: ["grilled chicken", "chicken breast", "chicken"], cal: 230, serving: "6 oz cooked", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Roasted chicken thigh", keys: ["chicken thigh"], cal: 280, serving: "6 oz cooked", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Baked salmon", keys: ["salmon"], cal: 280, serving: "6 oz", tags: [], meal: ["lunch","dinner"] },
+  { name: "Tuna (canned in water)", keys: ["tuna"], cal: 110, serving: "1 can drained", tags: [], meal: ["lunch"] },
+  { name: "Shrimp (grilled)", keys: ["shrimp", "prawns"], cal: 170, serving: "6 oz", tags: ["shellfish"], meal: ["lunch","dinner"] },
+  { name: "Tilapia (baked)", keys: ["tilapia", "white fish", "cod"], cal: 180, serving: "6 oz", tags: [], meal: ["lunch","dinner"] },
+  { name: "Beef steak (lean)", keys: ["steak", "beef", "sirloin"], cal: 350, serving: "6 oz", tags: ["meat"], meal: ["dinner"] },
+  { name: "Ground beef (90% lean)", keys: ["ground beef", "hamburger meat"], cal: 280, serving: "6 oz", tags: ["meat"], meal: ["dinner","lunch"] },
+  { name: "Pork chop", keys: ["pork chop", "pork", "ham"], cal: 280, serving: "6 oz", tags: ["pork","meat"], meal: ["dinner"] },
+  { name: "Tofu (firm, baked)", keys: ["tofu"], cal: 180, serving: "6 oz", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Chickpeas (1 cup)", keys: ["chickpeas", "garbanzo"], cal: 270, serving: "1 cup cooked", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Lentils (1 cup cooked)", keys: ["lentil", "lentils"], cal: 230, serving: "1 cup cooked", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Black beans (1 cup)", keys: ["black beans", "beans"], cal: 230, serving: "1 cup cooked", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+
+  // Carbs / sides
+  { name: "Brown rice (1 cup)", keys: ["brown rice"], cal: 220, serving: "1 cup cooked", tags: [], meal: ["lunch","dinner"] },
+  { name: "White rice (1 cup)", keys: ["white rice", "rice"], cal: 205, serving: "1 cup cooked", tags: [], meal: ["lunch","dinner"] },
+  { name: "Quinoa (1 cup)", keys: ["quinoa"], cal: 220, serving: "1 cup cooked", tags: [], meal: ["lunch","dinner"] },
+  { name: "Pasta (1 cup)", keys: ["pasta", "spaghetti", "penne"], cal: 220, serving: "1 cup cooked", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Sweet potato (baked)", keys: ["sweet potato"], cal: 180, serving: "1 medium", tags: [], meal: ["lunch","dinner"] },
+  { name: "Baked potato", keys: ["baked potato", "potato"], cal: 160, serving: "1 medium", tags: [], meal: ["lunch","dinner"] },
+  { name: "French fries", keys: ["french fries", "fries"], cal: 365, serving: "medium order", tags: [], meal: ["lunch","dinner"] },
+  { name: "Tortilla (flour)", keys: ["tortilla", "wrap"], cal: 150, serving: "1 large", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Bread roll", keys: ["roll", "dinner roll"], cal: 120, serving: "1 roll", tags: ["gluten"], meal: ["lunch","dinner"] },
+
+  // Veggies
+  { name: "Broccoli (steamed)", keys: ["broccoli"], cal: 55, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Mixed greens salad", keys: ["salad", "mixed greens", "green salad"], cal: 80, serving: "2 cups with light dressing", tags: [], meal: ["lunch","dinner"] },
+  { name: "Caesar salad", keys: ["caesar"], cal: 360, serving: "1 large with dressing", tags: ["dairy"], meal: ["lunch"] },
+  { name: "Spinach (cooked)", keys: ["spinach"], cal: 40, serving: "1 cup cooked", tags: [], meal: ["lunch","dinner"] },
+  { name: "Roasted vegetables", keys: ["roasted vegetables", "veggies", "vegetables"], cal: 130, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Avocado", keys: ["avocado"], cal: 240, serving: "1 medium", tags: [], meal: ["breakfast","lunch"] },
+
+  // Combo meals
+  { name: "Chicken Caesar salad", keys: ["chicken caesar"], cal: 520, serving: "1 large", tags: ["dairy","meat"], meal: ["lunch"] },
+  { name: "Chicken burrito", keys: ["chicken burrito", "burrito"], cal: 720, serving: "1 large", tags: ["dairy","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Beef burrito bowl", keys: ["burrito bowl", "beef bowl"], cal: 680, serving: "1 large", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Chicken sandwich (grilled)", keys: ["chicken sandwich"], cal: 480, serving: "1 sandwich", tags: ["gluten","meat"], meal: ["lunch"] },
+  { name: "Turkey sandwich", keys: ["turkey sandwich", "turkey sub"], cal: 420, serving: "1 sandwich", tags: ["gluten","meat"], meal: ["lunch"] },
+  { name: "Ham sandwich", keys: ["ham sandwich"], cal: 380, serving: "1 sandwich", tags: ["pork","gluten","meat"], meal: ["lunch"] },
+  { name: "Cheeseburger", keys: ["cheeseburger", "burger"], cal: 620, serving: "1 quarter-pounder w/ cheese", tags: ["dairy","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Pizza slice (cheese)", keys: ["pizza"], cal: 285, serving: "1 slice", tags: ["dairy","gluten"], meal: ["lunch","dinner"] },
+  { name: "Pepperoni pizza slice", keys: ["pepperoni"], cal: 320, serving: "1 slice", tags: ["pork","dairy","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Sushi (8 pcs)", keys: ["sushi", "roll"], cal: 350, serving: "8 pcs california/salmon", tags: [], meal: ["lunch","dinner"] },
+  { name: "Stir-fry (chicken & veg)", keys: ["stir fry", "stir-fry"], cal: 480, serving: "1 plate with rice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Pad thai", keys: ["pad thai"], cal: 600, serving: "1 plate", tags: ["nuts"], meal: ["dinner"] },
+  { name: "Pasta with marinara", keys: ["spaghetti marinara", "marinara"], cal: 420, serving: "1 plate", tags: ["gluten"], meal: ["dinner"] },
+  { name: "Mac and cheese", keys: ["mac and cheese", "mac n cheese"], cal: 540, serving: "1.5 cups", tags: ["dairy","gluten"], meal: ["lunch","dinner"] },
+
+  // Snacks & extras
+  { name: "Almonds (1 oz)", keys: ["almonds"], cal: 165, serving: "1 oz (~23 nuts)", tags: ["nuts"], meal: ["snack"] },
+  { name: "Cashews (1 oz)", keys: ["cashew", "cashews"], cal: 160, serving: "1 oz", tags: ["nuts"], meal: ["snack"] },
+  { name: "Trail mix (1/4 cup)", keys: ["trail mix"], cal: 175, serving: "1/4 cup", tags: ["nuts"], meal: ["snack"] },
+  { name: "Hummus (1/4 cup)", keys: ["hummus"], cal: 100, serving: "1/4 cup", tags: ["vegetarian","vegan"], meal: ["snack","lunch"] },
+  { name: "Carrots (1 cup)", keys: ["carrot", "carrots"], cal: 50, serving: "1 cup raw", tags: [], meal: ["snack"] },
+  { name: "Cheese slice", keys: ["cheese"], cal: 110, serving: "1 oz", tags: ["dairy"], meal: ["snack"] },
+  { name: "Protein bar", keys: ["protein bar"], cal: 220, serving: "1 bar", tags: [], meal: ["snack"] },
+  { name: "Granola bar", keys: ["granola bar"], cal: 180, serving: "1 bar", tags: [], meal: ["snack"] },
+  { name: "Dark chocolate (1 oz)", keys: ["dark chocolate", "chocolate"], cal: 170, serving: "1 oz", tags: ["dairy"], meal: ["snack"] },
+  { name: "Popcorn (3 cups air-popped)", keys: ["popcorn"], cal: 95, serving: "3 cups", tags: [], meal: ["snack"] },
+  { name: "Ice cream", keys: ["ice cream"], cal: 270, serving: "1 cup", tags: ["dairy"], meal: ["snack"] },
+  { name: "Cookie", keys: ["cookie"], cal: 150, serving: "1 large", tags: ["dairy","gluten"], meal: ["snack"] },
+  { name: "Donut (glazed)", keys: ["donut", "doughnut"], cal: 260, serving: "1 glazed", tags: ["dairy","gluten"], meal: ["snack","breakfast"] },
+  { name: "Chips (1 oz)", keys: ["chips", "potato chips"], cal: 160, serving: "1 oz bag", tags: [], meal: ["snack"] },
+  { name: "Soda (12 oz)", keys: ["soda", "coke", "pepsi"], cal: 150, serving: "12 oz can", tags: [], meal: ["snack"] },
+  { name: "Coffee with cream & sugar", keys: ["coffee"], cal: 60, serving: "12 oz with cream + sugar", tags: ["dairy"], meal: ["breakfast","snack"] },
+  { name: "Latte (whole milk)", keys: ["latte"], cal: 190, serving: "12 oz", tags: ["dairy"], meal: ["breakfast","snack"] },
+  { name: "Orange juice (8 oz)", keys: ["orange juice", "oj"], cal: 110, serving: "8 oz", tags: [], meal: ["breakfast"] },
+  { name: "Milk (1 cup whole)", keys: ["milk"], cal: 150, serving: "1 cup", tags: ["dairy"], meal: ["breakfast","snack"] },
+
+  // ============= CARIBBEAN / JAMAICAN =============
+  { name: "Jerk chicken", keys: ["jerk chicken","jerk"], cal: 280, serving: "6 oz cooked", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Curry goat", keys: ["curry goat","curried goat"], cal: 350, serving: "6 oz with sauce", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Curry chicken (Jamaican)", keys: ["curry chicken","curried chicken"], cal: 310, serving: "6 oz with sauce", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Oxtail stew", keys: ["oxtail","ox tail"], cal: 480, serving: "1 cup with sauce", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Brown stew chicken", keys: ["brown stew chicken","stew chicken"], cal: 340, serving: "1 piece + sauce", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Stew peas", keys: ["stew peas"], cal: 380, serving: "1 cup", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Ackee and saltfish", keys: ["ackee and saltfish","ackee","saltfish"], cal: 330, serving: "1 serving", tags: [], meal: ["breakfast","lunch"] },
+  { name: "Callaloo (sautéed)", keys: ["callaloo"], cal: 90, serving: "1 cup cooked", tags: ["vegetarian","vegan"], meal: ["breakfast","lunch","dinner"] },
+  { name: "Rice and peas", keys: ["rice and peas","peas and rice"], cal: 280, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Fried plantain", keys: ["fried plantain","plantain"], cal: 180, serving: "1/2 plantain", tags: ["vegetarian","vegan"], meal: ["breakfast","lunch","dinner","snack"] },
+  { name: "Boiled green banana", keys: ["green banana","boiled banana"], cal: 110, serving: "1 medium", tags: ["vegetarian","vegan"], meal: ["breakfast","lunch","dinner"] },
+  { name: "Boiled yam", keys: ["yam"], cal: 120, serving: "1 cup", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Boiled dumpling", keys: ["boiled dumpling","dumpling"], cal: 140, serving: "1 medium", tags: ["gluten"], meal: ["breakfast","lunch","dinner"] },
+  { name: "Festival (fried dumpling)", keys: ["festival"], cal: 180, serving: "1 piece", tags: ["gluten"], meal: ["breakfast","lunch","dinner"] },
+  { name: "Bammy", keys: ["bammy"], cal: 190, serving: "1 piece", tags: [], meal: ["breakfast","lunch"] },
+  { name: "Hard dough bread", keys: ["hard dough bread","hardo bread","hard dough"], cal: 110, serving: "1 slice", tags: ["gluten"], meal: ["breakfast","lunch"] },
+  { name: "Jamaican beef patty", keys: ["beef patty","beef pattie"], cal: 340, serving: "1 patty", tags: ["gluten","meat"], meal: ["lunch","snack"] },
+  { name: "Jamaican chicken patty", keys: ["chicken patty","chicken pattie"], cal: 310, serving: "1 patty", tags: ["gluten","meat"], meal: ["lunch","snack"] },
+  { name: "Saltfish fritters", keys: ["saltfish fritter","fritter"], cal: 95, serving: "1 fritter", tags: ["gluten"], meal: ["breakfast","snack"] },
+  { name: "Cornmeal porridge", keys: ["cornmeal porridge"], cal: 240, serving: "1 bowl", tags: ["dairy"], meal: ["breakfast"] },
+  { name: "Plantain porridge", keys: ["plantain porridge"], cal: 250, serving: "1 bowl", tags: ["dairy"], meal: ["breakfast"] },
+  { name: "Banana porridge", keys: ["banana porridge"], cal: 230, serving: "1 bowl", tags: ["dairy"], meal: ["breakfast"] },
+  { name: "Escovitch fish", keys: ["escovitch","escoveitch"], cal: 320, serving: "1 fish + sauce", tags: [], meal: ["lunch","dinner"] },
+  { name: "Brown stew fish", keys: ["brown stew fish","stew fish"], cal: 290, serving: "1 piece", tags: [], meal: ["lunch","dinner"] },
+  { name: "Roti", keys: ["roti"], cal: 250, serving: "1 large", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Curry shrimp", keys: ["curry shrimp"], cal: 280, serving: "6 oz", tags: ["shellfish"], meal: ["lunch","dinner"] },
+  { name: "Mannish water (goat soup)", keys: ["mannish water"], cal: 200, serving: "1 bowl", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Coconut rice", keys: ["coconut rice"], cal: 250, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Sorrel drink", keys: ["sorrel"], cal: 120, serving: "1 cup sweetened", tags: ["vegetarian","vegan"], meal: ["snack"] },
+  { name: "Ginger beer", keys: ["ginger beer"], cal: 110, serving: "1 cup", tags: [], meal: ["snack"] },
+  { name: "Jamaican bun (Easter bun)", keys: ["jamaican bun","easter bun","bun and cheese"], cal: 280, serving: "1 slice", tags: ["dairy","gluten"], meal: ["snack","breakfast"] },
+  { name: "Plantain chips", keys: ["plantain chips"], cal: 150, serving: "1 oz bag", tags: ["vegetarian","vegan"], meal: ["snack"] },
+  { name: "Coco bread", keys: ["coco bread"], cal: 250, serving: "1 piece", tags: ["gluten"], meal: ["lunch","snack"] },
+  { name: "Coconut drops", keys: ["coconut drops"], cal: 130, serving: "1 piece", tags: ["vegetarian","vegan"], meal: ["snack"] },
+
+  // ============= AMERICAN / DINER =============
+  { name: "Buttermilk biscuit", keys: ["biscuit"], cal: 210, serving: "1 large", tags: ["dairy","gluten"], meal: ["breakfast"] },
+  { name: "Breakfast burrito", keys: ["breakfast burrito"], cal: 480, serving: "1 large", tags: ["dairy","gluten","meat"], meal: ["breakfast"] },
+  { name: "Western omelette", keys: ["western omelet","western omelette","denver omelet"], cal: 360, serving: "3-egg with ham & cheese", tags: ["dairy","pork","meat"], meal: ["breakfast"] },
+  { name: "Steak and eggs", keys: ["steak and eggs"], cal: 520, serving: "1 plate", tags: ["meat"], meal: ["breakfast"] },
+  { name: "Buffalo wings", keys: ["buffalo wings","wings"], cal: 430, serving: "6 wings + sauce", tags: ["dairy","meat"], meal: ["lunch","dinner","snack"] },
+  { name: "Onion rings", keys: ["onion ring","onion rings"], cal: 300, serving: "1 order", tags: ["gluten"], meal: ["snack","lunch","dinner"] },
+  { name: "Mozzarella sticks", keys: ["mozzarella stick","cheese sticks"], cal: 360, serving: "5 sticks", tags: ["dairy","gluten"], meal: ["snack"] },
+  { name: "Chicken tenders", keys: ["chicken tender","chicken strips","chicken fingers"], cal: 340, serving: "4 pieces", tags: ["gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Philly cheesesteak", keys: ["cheesesteak","philly"], cal: 700, serving: "1 large", tags: ["dairy","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Reuben sandwich", keys: ["reuben"], cal: 680, serving: "1 sandwich", tags: ["dairy","gluten","meat"], meal: ["lunch"] },
+  { name: "BLT sandwich", keys: ["blt"], cal: 430, serving: "1 sandwich", tags: ["pork","gluten","meat"], meal: ["breakfast","lunch"] },
+  { name: "Club sandwich", keys: ["club sandwich","club"], cal: 580, serving: "1 triple-decker", tags: ["pork","gluten","meat"], meal: ["lunch"] },
+  { name: "Cobb salad", keys: ["cobb salad","cobb"], cal: 520, serving: "1 entrée", tags: ["dairy","pork","meat"], meal: ["lunch"] },
+  { name: "Tuna melt", keys: ["tuna melt"], cal: 520, serving: "1 sandwich", tags: ["dairy","gluten"], meal: ["lunch"] },
+  { name: "Grilled cheese", keys: ["grilled cheese"], cal: 390, serving: "1 sandwich", tags: ["dairy","gluten"], meal: ["lunch"] },
+  { name: "Cuban sandwich", keys: ["cuban sandwich","cubano"], cal: 580, serving: "1 sandwich", tags: ["pork","dairy","gluten","meat"], meal: ["lunch"] },
+  { name: "Meatloaf", keys: ["meatloaf"], cal: 390, serving: "1 slice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Pot roast", keys: ["pot roast"], cal: 420, serving: "6 oz with gravy", tags: ["meat"], meal: ["dinner"] },
+  { name: "Chicken fried steak", keys: ["chicken fried steak"], cal: 580, serving: "1 piece w/ gravy", tags: ["dairy","gluten","meat"], meal: ["dinner"] },
+  { name: "BBQ ribs (pork)", keys: ["bbq ribs","ribs","pork ribs"], cal: 500, serving: "4 ribs", tags: ["pork","meat"], meal: ["dinner"] },
+  { name: "Beef chili", keys: ["chili"], cal: 340, serving: "1 cup", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Cornbread", keys: ["cornbread"], cal: 190, serving: "1 piece", tags: ["dairy","gluten"], meal: ["lunch","dinner"] },
+  { name: "Mashed potatoes", keys: ["mashed potato","mashed potatoes"], cal: 210, serving: "1 cup", tags: ["dairy"], meal: ["dinner","lunch"] },
+  { name: "Coleslaw", keys: ["coleslaw","cole slaw"], cal: 150, serving: "1/2 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Apple pie", keys: ["apple pie"], cal: 410, serving: "1 slice", tags: ["dairy","gluten"], meal: ["snack"] },
+
+  // ============= CHINESE =============
+  { name: "Chicken fried rice", keys: ["chicken fried rice"], cal: 340, serving: "1 cup", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Pork fried rice", keys: ["pork fried rice"], cal: 360, serving: "1 cup", tags: ["pork","meat"], meal: ["lunch","dinner"] },
+  { name: "Shrimp fried rice", keys: ["shrimp fried rice"], cal: 330, serving: "1 cup", tags: ["shellfish"], meal: ["lunch","dinner"] },
+  { name: "Vegetable fried rice", keys: ["vegetable fried rice","veg fried rice"], cal: 290, serving: "1 cup", tags: ["vegetarian"], meal: ["lunch","dinner"] },
+  { name: "Beef and broccoli", keys: ["beef and broccoli","beef broccoli"], cal: 440, serving: "1 plate", tags: ["meat"], meal: ["dinner"] },
+  { name: "Orange chicken", keys: ["orange chicken"], cal: 480, serving: "1 plate", tags: ["gluten","meat"], meal: ["dinner"] },
+  { name: "General Tso's chicken", keys: ["general tso","general tao","general gao"], cal: 520, serving: "1 plate", tags: ["gluten","meat"], meal: ["dinner"] },
+  { name: "Kung pao chicken", keys: ["kung pao","kung po"], cal: 430, serving: "1 plate", tags: ["meat","nuts"], meal: ["dinner"] },
+  { name: "Sweet and sour chicken", keys: ["sweet and sour chicken","sweet and sour"], cal: 470, serving: "1 plate", tags: ["gluten","meat"], meal: ["dinner"] },
+  { name: "Lo mein", keys: ["lo mein"], cal: 480, serving: "1 plate", tags: ["gluten"], meal: ["dinner"] },
+  { name: "Chow mein", keys: ["chow mein"], cal: 430, serving: "1 plate", tags: ["gluten"], meal: ["dinner"] },
+  { name: "Egg roll", keys: ["egg roll"], cal: 200, serving: "1 piece", tags: ["gluten","meat"], meal: ["snack","lunch","dinner"] },
+  { name: "Spring roll", keys: ["spring roll"], cal: 80, serving: "1 piece", tags: ["vegetarian","vegan"], meal: ["snack","lunch","dinner"] },
+  { name: "Pork dumplings", keys: ["pork dumpling","pork dumplings"], cal: 280, serving: "6 pieces", tags: ["pork","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Chicken dumplings", keys: ["chicken dumpling","chicken dumplings"], cal: 260, serving: "6 pieces", tags: ["gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Wonton soup", keys: ["wonton"], cal: 150, serving: "1 bowl", tags: ["gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Hot and sour soup", keys: ["hot and sour"], cal: 95, serving: "1 cup", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Egg drop soup", keys: ["egg drop"], cal: 75, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Mapo tofu", keys: ["mapo tofu","ma po"], cal: 340, serving: "1 plate", tags: ["pork","meat"], meal: ["dinner"] },
+  { name: "Cashew chicken", keys: ["cashew chicken"], cal: 470, serving: "1 plate", tags: ["meat","nuts"], meal: ["dinner"] },
+
+  // ============= THAI =============
+  { name: "Pad see ew", keys: ["pad see ew","see ew"], cal: 520, serving: "1 plate", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Drunken noodles (pad kee mao)", keys: ["pad kee mao","drunken noodles"], cal: 530, serving: "1 plate", tags: ["gluten"], meal: ["dinner"] },
+  { name: "Green curry chicken", keys: ["green curry chicken","green curry"], cal: 420, serving: "1 bowl with rice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Red curry chicken", keys: ["red curry chicken","red curry"], cal: 410, serving: "1 bowl with rice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Massaman curry", keys: ["massaman"], cal: 530, serving: "1 bowl with rice", tags: ["meat","nuts"], meal: ["dinner"] },
+  { name: "Tom yum soup", keys: ["tom yum"], cal: 140, serving: "1 bowl", tags: ["shellfish"], meal: ["lunch","dinner"] },
+  { name: "Tom kha gai (coconut chicken soup)", keys: ["tom kha"], cal: 310, serving: "1 bowl", tags: ["meat"], meal: ["lunch","dinner"] },
+  { name: "Thai basil chicken (pad krapow)", keys: ["thai basil","pad krapow","krapow"], cal: 440, serving: "1 plate", tags: ["meat"], meal: ["dinner"] },
+  { name: "Mango sticky rice", keys: ["mango sticky rice","sticky rice"], cal: 370, serving: "1 dessert plate", tags: ["vegetarian","vegan"], meal: ["snack"] },
+
+  // ============= JAPANESE =============
+  { name: "Salmon nigiri", keys: ["salmon nigiri"], cal: 50, serving: "1 piece", tags: [], meal: ["lunch","dinner","snack"] },
+  { name: "Tuna nigiri", keys: ["tuna nigiri"], cal: 50, serving: "1 piece", tags: [], meal: ["lunch","dinner","snack"] },
+  { name: "California roll", keys: ["california roll"], cal: 255, serving: "8 pieces", tags: ["shellfish"], meal: ["lunch","dinner"] },
+  { name: "Spicy tuna roll", keys: ["spicy tuna"], cal: 290, serving: "8 pieces", tags: [], meal: ["lunch","dinner"] },
+  { name: "Pork tonkotsu ramen", keys: ["pork tonkotsu ramen","tonkotsu ramen","tonkotsu","pork ramen"], cal: 580, serving: "1 bowl", tags: ["pork","gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Chicken shoyu ramen", keys: ["shoyu ramen","chicken ramen","ramen"], cal: 440, serving: "1 bowl", tags: ["gluten","meat"], meal: ["lunch","dinner"] },
+  { name: "Miso soup", keys: ["miso soup","miso"], cal: 50, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Edamame", keys: ["edamame"], cal: 190, serving: "1 cup in pods", tags: ["vegetarian","vegan"], meal: ["snack","lunch","dinner"] },
+  { name: "Teriyaki chicken", keys: ["teriyaki chicken","teriyaki"], cal: 430, serving: "1 plate with rice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Teriyaki salmon", keys: ["teriyaki salmon"], cal: 420, serving: "1 plate with rice", tags: [], meal: ["dinner"] },
+  { name: "Chicken katsu", keys: ["chicken katsu","katsu"], cal: 520, serving: "1 plate with rice", tags: ["gluten","meat"], meal: ["dinner"] },
+  { name: "Tonkatsu (pork cutlet)", keys: ["tonkatsu"], cal: 580, serving: "1 plate with rice", tags: ["pork","gluten","meat"], meal: ["dinner"] },
+  { name: "Shrimp tempura", keys: ["shrimp tempura","ebi tempura"], cal: 270, serving: "6 pieces", tags: ["shellfish","gluten"], meal: ["lunch","dinner"] },
+  { name: "Vegetable tempura", keys: ["vegetable tempura","veggie tempura"], cal: 220, serving: "1 serving", tags: ["gluten","vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Pork gyoza", keys: ["gyoza"], cal: 250, serving: "6 pieces", tags: ["pork","gluten","meat"], meal: ["snack","lunch"] },
+
+  // ============= INDIAN =============
+  { name: "Chicken tikka masala", keys: ["tikka masala","chicken tikka"], cal: 450, serving: "1 plate with rice", tags: ["dairy","meat"], meal: ["dinner"] },
+  { name: "Butter chicken", keys: ["butter chicken","murgh makhani"], cal: 490, serving: "1 plate with rice", tags: ["dairy","meat"], meal: ["dinner"] },
+  { name: "Chicken biryani", keys: ["chicken biryani"], cal: 480, serving: "1 plate", tags: ["meat"], meal: ["dinner"] },
+  { name: "Vegetable biryani", keys: ["vegetable biryani","veg biryani","biryani"], cal: 380, serving: "1 plate", tags: ["vegetarian"], meal: ["dinner"] },
+  { name: "Chana masala", keys: ["chana masala","channa"], cal: 330, serving: "1 plate with rice", tags: ["vegetarian","vegan"], meal: ["lunch","dinner"] },
+  { name: "Dal (lentil curry)", keys: ["dal","daal","dahl"], cal: 250, serving: "1 cup", tags: ["vegetarian"], meal: ["lunch","dinner"] },
+  { name: "Palak paneer", keys: ["palak paneer","paneer"], cal: 320, serving: "1 plate", tags: ["dairy","vegetarian"], meal: ["dinner"] },
+  { name: "Saag", keys: ["saag"], cal: 200, serving: "1 cup", tags: ["dairy","vegetarian"], meal: ["dinner"] },
+  { name: "Naan bread", keys: ["naan"], cal: 260, serving: "1 piece", tags: ["dairy","gluten"], meal: ["lunch","dinner"] },
+  { name: "Chapati / roti (Indian)", keys: ["chapati","chapatti"], cal: 120, serving: "1 piece", tags: ["gluten"], meal: ["lunch","dinner"] },
+  { name: "Basmati rice", keys: ["basmati rice","basmati"], cal: 210, serving: "1 cup", tags: [], meal: ["lunch","dinner"] },
+  { name: "Samosa", keys: ["samosa"], cal: 260, serving: "1 piece", tags: ["gluten","vegetarian","vegan"], meal: ["snack","lunch"] },
+  { name: "Pakora", keys: ["pakora"], cal: 150, serving: "3 pieces", tags: ["gluten","vegetarian","vegan"], meal: ["snack"] },
+  { name: "Tandoori chicken", keys: ["tandoori"], cal: 340, serving: "2 pieces", tags: ["meat"], meal: ["dinner"] },
+  { name: "Lamb curry", keys: ["lamb curry"], cal: 480, serving: "1 plate with rice", tags: ["meat"], meal: ["dinner"] },
+  { name: "Aloo gobi", keys: ["aloo gobi"], cal: 210, serving: "1 plate", tags: ["vegetarian","vegan"], meal: ["dinner"] },
+  { name: "Mango lassi", keys: ["mango lassi","lassi"], cal: 220, serving: "1 cup", tags: ["dairy"], meal: ["snack"] },
+];
+
+/* ===============================================================
+   SAFE ALTERNATIVES — used when meal has issues
+   =============================================================== */
+const SUGGESTIONS = {
+  breakfast: [
+    { name: "Ackee & saltfish + boiled green banana", cal: 430, why: "Jamaican classic, naturally dairy-free" },
+    { name: "Scrambled eggs (2) + avocado toast", cal: 400, why: "Protein-forward, dairy-free, keeps you full" },
+    { name: "Callaloo + 2 boiled eggs + 1 bammy", cal: 340, why: "Lean Caribbean breakfast, no dairy" },
+    { name: "Oatmeal with berries & almond butter", cal: 380, why: "Slow carbs + healthy fats, dairy-free" },
+    { name: "Veggie omelette (2 eggs, spinach, tomato)", cal: 260, why: "High protein, low cal, dairy-free" },
+    { name: "Turkey bacon + 2 boiled eggs + fruit", cal: 320, why: "Low cal, very high protein" },
+    { name: "Fruit smoothie with almond milk + banana + PB", cal: 380, why: "Easy on the go, dairy-free" },
+    { name: "Saltfish fritters (2) + sliced tomato", cal: 280, why: "Jamaican, dairy-free, satisfying" },
+  ],
+  lunch: [
+    { name: "Jerk chicken + rice & peas + steamed cabbage", cal: 560, why: "Big Jamaican plate, naturally dairy-free" },
+    { name: "Grilled chicken salad (light dressing)", cal: 420, why: "High protein, naturally dairy-free" },
+    { name: "Brown stew chicken + 1/2 cup rice + plantain", cal: 580, why: "Jamaican comfort, no dairy" },
+    { name: "Turkey + avocado wrap", cal: 480, why: "Lean protein, no dairy, satisfying" },
+    { name: "Salmon teriyaki + steamed rice + edamame", cal: 540, why: "Lean Asian option, dairy-free" },
+    { name: "Tuna salad over greens", cal: 360, why: "Low cal, omega-3, no dairy" },
+    { name: "Chicken & quinoa bowl with veggies", cal: 520, why: "Protein + fiber" },
+    { name: "Lentil soup + side salad", cal: 400, why: "Plant-based, very filling" },
+  ],
+  dinner: [
+    { name: "Jerk chicken + roasted veggies + 1/2 plantain", cal: 540, why: "Caribbean, balanced, dairy-free" },
+    { name: "Escovitch fish + steamed callaloo", cal: 470, why: "Light Jamaican dinner, no dairy" },
+    { name: "Baked salmon + roasted veggies + sweet potato", cal: 560, why: "Balanced, high nutrient density" },
+    { name: "Chicken & broccoli stir-fry over rice", cal: 540, why: "Asian-style, easily dairy-free" },
+    { name: "Thai green curry chicken (less rice)", cal: 480, why: "Flavorful, dairy-free" },
+    { name: "Grilled chicken + brown rice + broccoli", cal: 540, why: "Classic high-protein plate" },
+    { name: "Curry chicken (Jamaican) + 1/2 cup rice", cal: 540, why: "Caribbean staple, dairy-free" },
+    { name: "Tilapia + quinoa + roasted asparagus", cal: 500, why: "Lean and clean" },
+  ],
+  snack: [
+    { name: "Plantain chips (1 oz) + 2 tbsp guacamole", cal: 200, why: "Caribbean-inspired, dairy-free" },
+    { name: "Apple + 1 tbsp almond butter", cal: 190, why: "Sustained energy, no dairy" },
+    { name: "Edamame (1 cup in pods)", cal: 190, why: "High protein, no dairy" },
+    { name: "Handful of almonds (1 oz)", cal: 165, why: "Easy, satisfying" },
+    { name: "Hummus + carrots", cal: 150, why: "Fiber + protein, very low cal" },
+    { name: "Banana + peanut butter", cal: 200, why: "Pre/post-workout friendly" },
+    { name: "Boiled egg + fruit", cal: 170, why: "Protein-forward snack" },
+    { name: "Air-popped popcorn (3 cups)", cal: 95, why: "Big volume, low cal" },
+  ],
+};
+
+const TIPS = [
+  "Drink a glass of water before each meal — it helps with portion control.",
+  "Front-load your protein: aim for 25–35g at breakfast to curb cravings later.",
+  "Walking 10 minutes after each meal can meaningfully improve blood sugar response.",
+  "Sleep matters more than people think — under 7 hours raises hunger hormones.",
+  "If you're stuck, try swapping liquid calories (soda, juice, sugary coffee) for water or sparkling water.",
+  "Aim for a fist-sized portion of protein and two fists of vegetables at lunch and dinner.",
+  "Plan tomorrow tonight — knowing your breakfast in advance prevents impulsive choices.",
+];
+
+/* ===============================================================
+   STATE
+   =============================================================== */
+const todayKey = () => {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
+};
+const STORAGE = {
+  profileKey: "mealcoach.profile.v1",
+  dayKey: () => "mealcoach.day." + todayKey(),
+};
+
+let profile = null;
+let day = null;
+
+function loadProfile() {
+  try { profile = JSON.parse(localStorage.getItem(STORAGE.profileKey)); } catch { profile = null; }
+}
+function saveProfile() { localStorage.setItem(STORAGE.profileKey, JSON.stringify(profile)); }
+function loadDay() {
+  try { day = JSON.parse(localStorage.getItem(STORAGE.dayKey())); } catch { day = null; }
+  if (!day) day = { meals: {}, exercise: [], weight: null };
+}
+function saveDay() { localStorage.setItem(STORAGE.dayKey(), JSON.stringify(day)); }
+
+/* ===============================================================
+   NUTRITION MATH
+   =============================================================== */
+function calcBMR(p) {
+  const kg = p.currentLbs / 2.20462;
+  const cm = (p.heightFt * 12 + p.heightIn) * 2.54;
+  if (p.sex === "male") return 10*kg + 6.25*cm - 5*p.age + 5;
+  return 10*kg + 6.25*cm - 5*p.age - 161;
+}
+function calcTDEE(p) { return calcBMR(p) * parseFloat(p.activity); }
+function targetCalories(p) {
+  const tdee = calcTDEE(p);
+  const direction = p.goalLbs < p.currentLbs ? "loss" : (p.goalLbs > p.currentLbs ? "gain" : "maintain");
+  const dailyDelta = parseFloat(p.paceLbsWeek) * 3500 / 7; // 3500 cal ~ 1 lb
+  let target = tdee;
+  if (direction === "loss") target = tdee - dailyDelta;
+  else if (direction === "gain") target = tdee + dailyDelta;
+  // safety floor
+  const floor = p.sex === "male" ? 1500 : 1200;
+  if (target < floor) target = floor;
+  return { tdee: Math.round(tdee), target: Math.round(target), direction, dailyDelta: Math.round(dailyDelta) };
+}
+const MEAL_SPLIT = { breakfast: 0.25, lunch: 0.35, dinner: 0.30, snack: 0.10 };
+
+const MET = {
+  "walk-slow": 3.5, "walk-brisk": 5.0, "jog": 8.3, "run": 9.8, "run-fast": 11.0,
+  "cycle": 7.5, "strength": 5.0,
+};
+const EX_LABEL = {
+  "walk-slow": "Walk (3 mph)", "walk-brisk": "Brisk walk (4 mph)",
+  "jog": "Jog (5 mph)", "run": "Run (6 mph)", "run-fast": "Run (7 mph)",
+  "cycle": "Cycling", "strength": "Strength training",
+};
+function caloriesBurned(weightLbs, type, minutes) {
+  const kg = weightLbs / 2.20462;
+  const met = MET[type] || 4.0;
+  return Math.round(met * kg * (minutes / 60));
+}
+
+/* ===============================================================
+   MEAL PARSER
+   - tokenize input
+   - find matching foods
+   - estimate quantity from numbers in input
+   =============================================================== */
+function parseQuantity(text) {
+  // Pull a leading number like "2 eggs", "3 slices", "1/2 cup"
+  const m = text.match(/^\s*(\d+(\.\d+)?|\d*\/\d+)/);
+  if (!m) return 1;
+  const raw = m[1];
+  if (raw.includes("/")) {
+    const [a,b] = raw.split("/").map(Number);
+    return b ? a/b : 1;
+  }
+  return parseFloat(raw) || 1;
+}
+
+function findFoods(input) {
+  // Longest-key-first match across whole input so compound dish names
+  // like "rice and peas" or "beef and broccoli" win over their parts.
+  let text = " " + input.toLowerCase().replace(/[,;+]/g, " ") + " ";
+  const found = [];
+  const seen = new Set();
+
+  // Flatten (key, food) pairs and sort longest key first
+  const allKeys = [];
+  for (const food of FOODS) {
+    for (const key of food.keys) allKeys.push({ key, food });
+  }
+  allKeys.sort((a, b) => b.key.length - a.key.length);
+
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  for (const { key, food } of allKeys) {
+    if (seen.has(food.name)) continue;
+    // Allow optional plural 's' so "egg" matches "eggs", "dumpling" matches "dumplings", etc.
+    const re = new RegExp("(^|[^a-z0-9])" + escapeRe(key) + "s?([^a-z0-9]|$)", "i");
+    const m = text.match(re);
+    if (!m) continue;
+
+    // Find quantity in the ~25 chars before the match
+    const matchStart = m.index + (m[1] ? m[1].length : 0);
+    const before = text.substring(Math.max(0, matchStart - 25), matchStart);
+    let qty = 1;
+    const qtyMatch = before.match(/(\d+(?:\.\d+)?|\d+\/\d+)\s*(?:slices?\s+of\s+|pieces?\s+of\s+|cups?\s+of\s+|\w+\s+){0,2}$/i);
+    if (qtyMatch) {
+      const raw = qtyMatch[1];
+      if (raw.includes("/")) {
+        const [a, b] = raw.split("/").map(Number);
+        qty = b ? a / b : 1;
+      } else {
+        qty = parseFloat(raw);
+      }
+      if (qty < 0.25) qty = 0.25;
+      if (qty > 6) qty = 6;
+      // If serving already implies multiple (e.g. "2 large"), avoid double-counting
+      if (/^\d/.test(food.serving)) {
+        const servNum = parseInt(food.serving);
+        if (servNum > 1 && Math.abs(qty - servNum) < 0.5) qty = 1;
+        else if (servNum > 1) qty = qty / servNum;
+      }
+    }
+
+    seen.add(food.name);
+    found.push({ ...food, qty });
+    // Blank out the matched span (including optional trailing plural s) so overlapping keys don't double-match
+    let blankLen = key.length;
+    if (text.charAt(matchStart + key.length).toLowerCase() === "s") blankLen += 1;
+    text = text.substring(0, matchStart) + " ".repeat(blankLen) + text.substring(matchStart + blankLen);
+  }
+  return found;
+}
+
+function evaluateMeal(mealType, inputText) {
+  const items = findFoods(inputText);
+  const totalCal = items.reduce((s, it) => s + it.cal * it.qty, 0);
+  const restricted = profile.restrictions || [];
+  const violations = [];
+  for (const it of items) {
+    for (const tag of it.tags) {
+      if (restricted.includes(tag)) {
+        violations.push({ food: it.name, tag });
+      }
+    }
+    // vegetarian/vegan check vs meat tag
+    if (restricted.includes("vegetarian") && it.tags.includes("meat")) {
+      violations.push({ food: it.name, tag: "meat (vegetarian)" });
+    }
+    if (restricted.includes("vegan") && (it.tags.includes("meat") || it.tags.includes("dairy"))) {
+      violations.push({ food: it.name, tag: "animal (vegan)" });
+    }
+  }
+  const targets = targetCalories(profile);
+  const mealTarget = Math.round(targets.target * MEAL_SPLIT[mealType]);
+  const ratio = totalCal / mealTarget;
+  let verdict;
+  if (items.length === 0) {
+    verdict = { tone: "warn", title: "Hmm, I didn't recognize that meal", body: "Try describing the main items — e.g. 'grilled chicken with rice and broccoli'. I'll do my best to match them." };
+  } else if (violations.length > 0) {
+    const tags = [...new Set(violations.map(v => v.tag))].join(", ");
+    verdict = { tone: "bad", title: "That doesn't fit your dietary preferences", body: "Contains: " + tags + ". Try one of the alternatives below." };
+  } else if (ratio > 1.30) {
+    verdict = { tone: "warn", title: "This is heavy for " + mealType, body: "About " + Math.round(totalCal) + " cal vs a target of " + mealTarget + " cal. Try smaller portions, or save some for later." };
+  } else if (ratio > 1.10) {
+    verdict = { tone: "warn", title: "A bit above target — still OK", body: "About " + Math.round(totalCal) + " cal vs " + mealTarget + " cal target. Consider trimming portions slightly." };
+  } else if (ratio < 0.55 && mealType !== "snack") {
+    verdict = { tone: "warn", title: "This might be too light", body: "Only ~" + Math.round(totalCal) + " cal vs a " + mealTarget + " cal target. Add a side or larger portion so you stay full." };
+  } else {
+    verdict = { tone: "good", title: "Looks good — fits your plan", body: "About " + Math.round(totalCal) + " cal (target: " + mealTarget + " cal). Quantity suggested below." };
+  }
+  return { items, totalCal: Math.round(totalCal), violations, verdict, mealTarget };
+}
+
+function suggestQuantity(items, mealTarget) {
+  // If single item, scale it to mealTarget; else show portions
+  if (!items.length) return "";
+  if (items.length === 1) {
+    const it = items[0];
+    const scale = mealTarget / it.cal;
+    const suggestedQty = Math.max(0.5, Math.round(scale * 4) / 4);
+    return "Suggested portion: " + suggestedQty + " × " + it.serving + " (≈ " + Math.round(it.cal * suggestedQty) + " cal)";
+  }
+  // Multi item — describe what was matched
+  return "Matched: " + items.map(it => Math.round(it.qty * 10)/10 + " × " + it.serving + " of " + it.name + " (" + Math.round(it.cal * it.qty) + " cal)").join("; ");
+}
+
+function pickSuggestions(mealType, count) {
+  const restricted = profile.restrictions || [];
+  const pool = SUGGESTIONS[mealType] || [];
+  // We've already curated these to be dairy-free / pork-free.
+  // Filter further if vegetarian/vegan/etc. — for simplicity assume safe.
+  return pool.slice(0, count);
+}
+
+/* ===============================================================
+   UI: SETUP
+   =============================================================== */
+function bindChips(rootId, multi=false) {
+  const root = document.getElementById(rootId);
+  root.addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    if (multi) chip.classList.toggle("active");
+    else {
+      root.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+    }
+  });
+}
+bindChips("s-sex");
+bindChips("s-activity");
+bindChips("s-pace");
+bindChips("s-restrictions", true);
+
+function chipVal(rootId) {
+  return document.querySelector("#" + rootId + " .chip.active")?.dataset.val;
+}
+function chipVals(rootId) {
+  return [...document.querySelectorAll("#" + rootId + " .chip.active")].map(c => c.dataset.val);
+}
+
+document.getElementById("s-save").addEventListener("click", () => {
+  const cur = parseFloat(document.getElementById("s-current").value);
+  const goal = parseFloat(document.getElementById("s-goal").value);
+  const ft = parseInt(document.getElementById("s-ft").value);
+  const inch = parseInt(document.getElementById("s-in").value);
+  const age = parseInt(document.getElementById("s-age").value);
+  if (!cur || !goal || isNaN(ft) || isNaN(inch) || !age) {
+    toast("Please fill in current weight, goal weight, height, and age.");
+    return;
+  }
+  profile = {
+    currentLbs: cur,
+    goalLbs: goal,
+    startLbs: cur,
+    heightFt: ft, heightIn: inch,
+    age,
+    sex: chipVal("s-sex"),
+    activity: chipVal("s-activity"),
+    paceLbsWeek: chipVal("s-pace"),
+    restrictions: chipVals("s-restrictions"),
+    notes: document.getElementById("s-notes").value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  saveProfile();
+  showDashboard();
+});
+
+/* ===============================================================
+   UI: DASHBOARD
+   =============================================================== */
+function showSetup() {
+  document.getElementById("setup-screen").classList.remove("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
+  // Prefill if exists
+  if (profile) {
+    document.getElementById("s-current").value = profile.currentLbs;
+    document.getElementById("s-goal").value = profile.goalLbs;
+    document.getElementById("s-ft").value = profile.heightFt;
+    document.getElementById("s-in").value = profile.heightIn;
+    document.getElementById("s-age").value = profile.age;
+    document.getElementById("s-notes").value = profile.notes || "";
+    setChipActive("s-sex", profile.sex);
+    setChipActive("s-activity", profile.activity);
+    setChipActive("s-pace", profile.paceLbsWeek);
+    document.querySelectorAll("#s-restrictions .chip").forEach(c => {
+      c.classList.toggle("active", profile.restrictions.includes(c.dataset.val));
+    });
+  }
+}
+function setChipActive(rootId, val) {
+  document.querySelectorAll("#" + rootId + " .chip").forEach(c => {
+    c.classList.toggle("active", c.dataset.val === String(val));
+  });
+}
+
+function showDashboard() {
+  document.getElementById("setup-screen").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  renderDashboard();
+}
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function renderDashboard() {
+  const targets = targetCalories(profile);
+  document.getElementById("d-greeting").textContent = greeting() + " — let's eat well today";
+  document.getElementById("d-target").textContent = targets.target;
+  document.getElementById("i-bmr").textContent = Math.round(calcBMR(profile));
+  document.getElementById("i-tdee").textContent = targets.tdee;
+  document.getElementById("i-direction").textContent = targets.direction === "loss" ? "Lose weight" : targets.direction === "gain" ? "Gain weight" : "Maintain";
+  document.getElementById("i-deficit").textContent = targets.direction === "maintain" ? "—" : (targets.direction === "loss" ? "−" : "+") + targets.dailyDelta + " cal";
+  // ETA
+  const diff = Math.abs(profile.currentLbs - profile.goalLbs);
+  const weeks = profile.paceLbsWeek ? diff / parseFloat(profile.paceLbsWeek) : 0;
+  document.getElementById("i-eta").textContent = weeks > 0 ? Math.round(weeks) + " weeks" : "—";
+
+  // Weight panel
+  document.getElementById("w-current").textContent = profile.currentLbs;
+  document.getElementById("w-goal").textContent = profile.goalLbs;
+  document.getElementById("w-togo").textContent = (profile.currentLbs - profile.goalLbs).toFixed(1);
+  const total = Math.abs(profile.startLbs - profile.goalLbs);
+  const done = Math.abs(profile.startLbs - profile.currentLbs);
+  const pct = total > 0 ? Math.min(100, Math.round(done / total * 100)) : 0;
+  document.getElementById("weight-ring").style.setProperty("--pct", pct);
+  document.getElementById("ring-pct").textContent = pct + "%";
+
+  // Meal targets
+  document.querySelectorAll(".meal-card[data-meal]").forEach(card => {
+    const mt = card.dataset.meal;
+    const t = Math.round(targets.target * MEAL_SPLIT[mt]);
+    card.querySelector(".meal-target").textContent = t;
+    // Restore from day data
+    const saved = day.meals[mt];
+    const resultEl = card.querySelector(".meal-result");
+    if (saved && saved.text) {
+      card.querySelector(".meal-input").value = saved.text;
+      resultEl.innerHTML = renderMealEvalHtml(saved.eval, mt, true);
+    } else {
+      card.querySelector(".meal-input").value = "";
+      resultEl.innerHTML = "";
+    }
+  });
+
+  // Stats
+  renderTotals();
+
+  // Exercise suggestions
+  renderExerciseSuggestions();
+  renderLoggedExercise();
+
+  // Tip
+  document.getElementById("tip-text").textContent = TIPS[new Date().getDay() % TIPS.length];
+}
+
+function renderTotals() {
+  const eaten = Object.values(day.meals).filter(m=>m && m.saved).reduce((s,m)=>s + (m.eval.totalCal||0), 0);
+  const burned = day.exercise.reduce((s,e)=>s + e.cal, 0);
+  const targets = targetCalories(profile);
+  document.getElementById("d-eaten").textContent = eaten;
+  document.getElementById("d-burned").textContent = burned;
+  const remaining = targets.target - eaten + burned;
+  document.getElementById("d-remaining").textContent = remaining;
+  document.getElementById("d-eaten-pct").textContent = Math.round(eaten / targets.target * 100) + "% of target";
+  document.getElementById("d-remaining-note").textContent = remaining >= 0 ? "still available" : "over target";
+}
+
+function renderMealEvalHtml(ev, mealType, isSaved) {
+  if (!ev) return "";
+  const v = ev.verdict;
+  let html = '<div class="verdict ' + v.tone + '">';
+  html += '<div class="icon">' + (v.tone === "good" ? "✓" : v.tone === "warn" ? "!" : "✗") + '</div>';
+  html += '<div><strong>' + v.title + '</strong>' + v.body + '</div></div>';
+
+  // Show portion suggestion / match details
+  if (ev.items.length) {
+    html += '<div style="margin-top: 10px; font-size: 13px; color: var(--ink-soft);">' + suggestQuantity(ev.items, ev.mealTarget) + '</div>';
+  }
+
+  // Save button (if not yet saved)
+  if (!isSaved) {
+    html += '<div style="margin-top: 12px; display: flex; gap: 8px;">';
+    html += '<button class="btn btn-primary meal-save" data-meal="' + mealType + '">Log this meal (' + ev.totalCal + ' cal)</button>';
+    html += '</div>';
+  } else {
+    html += '<div class="meal-eaten"><span class="name">✓ Logged</span><span class="cal">' + ev.totalCal + ' cal</span></div>';
+  }
+
+  // Suggestions if bad/warn
+  if (v.tone !== "good") {
+    const sugg = pickSuggestions(mealType, 4);
+    if (sugg.length) {
+      html += '<div class="suggestions"><div class="suggestion-title">Better-fit ideas for your diet</div><div class="suggestion-list">';
+      for (const s of sugg) {
+        html += '<div class="suggestion" data-name="' + s.name + '"><div><div class="s-name">' + s.name + '</div><div class="s-cal">' + s.why + '</div></div><div class="s-cal">' + s.cal + ' cal</div></div>';
+      }
+      html += '</div></div>';
+    }
+  }
+  return html;
+}
+
+// Bind meal buttons (event delegation)
+document.getElementById("dashboard").addEventListener("click", e => {
+  const checkBtn = e.target.closest(".meal-check");
+  if (checkBtn) {
+    const card = checkBtn.closest(".meal-card");
+    const mt = card.dataset.meal;
+    const input = card.querySelector(".meal-input").value.trim();
+    if (!input) { toast("Tell me what you want to eat first."); return; }
+    const ev = evaluateMeal(mt, input);
+    day.meals[mt] = { text: input, eval: ev, saved: false };
+    saveDay();
+    card.querySelector(".meal-result").innerHTML = renderMealEvalHtml(ev, mt, false);
+    return;
+  }
+  const saveBtn = e.target.closest(".meal-save");
+  if (saveBtn) {
+    const mt = saveBtn.dataset.meal;
+    if (day.meals[mt]) {
+      day.meals[mt].saved = true;
+      saveDay();
+      const card = document.querySelector('.meal-card[data-meal="' + mt + '"]');
+      card.querySelector(".meal-result").innerHTML = renderMealEvalHtml(day.meals[mt].eval, mt, true);
+      renderTotals();
+      renderExerciseSuggestions();
+      toast("Meal logged ✓");
+    }
+    return;
+  }
+  const clearBtn = e.target.closest(".meal-clear");
+  if (clearBtn) {
+    const card = clearBtn.closest(".meal-card[data-meal]");
+    if (!card) return;
+    const mt = card.dataset.meal;
+    delete day.meals[mt];
+    saveDay();
+    card.querySelector(".meal-input").value = "";
+    card.querySelector(".meal-result").innerHTML = "";
+    renderTotals();
+    renderExerciseSuggestions();
+    return;
+  }
+  const sugg = e.target.closest(".suggestion");
+  if (sugg) {
+    const card = sugg.closest(".meal-card[data-meal]");
+    if (card) {
+      card.querySelector(".meal-input").value = sugg.dataset.name;
+      card.querySelector(".meal-check").click();
+    }
+    return;
+  }
+});
+
+document.getElementById("ex-refresh").addEventListener("click", renderExerciseSuggestions);
+
+function renderExerciseSuggestions() {
+  const targets = targetCalories(profile);
+  const eaten = Object.values(day.meals).filter(m=>m && m.saved).reduce((s,m)=>s + (m.eval.totalCal||0), 0);
+  const burned = day.exercise.reduce((s,e)=>s + e.cal, 0);
+  const overshoot = eaten - burned - targets.target; // positive = over
+
+  const w = profile.currentLbs;
+  // Build suggestions — 3 options, scaled to need
+  const baseMinutes = overshoot > 200 ? 45 : overshoot > 0 ? 30 : 20;
+
+  const suggestions = [
+    { type: "walk-brisk", min: baseMinutes, label: "Brisk walk", icon: "🚶", desc: "4 mph pace, easy on joints" },
+    { type: "jog", min: Math.max(15, baseMinutes - 15), label: "Easy jog", icon: "🏃", desc: "5 mph, get your heart rate up" },
+    { type: "run", min: Math.max(15, baseMinutes - 20), label: "Run", icon: "💨", desc: "6 mph, more intense burn" },
+  ];
+
+  let html = "";
+  // Intro line
+  if (overshoot > 100) {
+    html += '<div style="font-size: 13px; color: var(--warn); background: var(--warn-soft); padding: 10px 13px; border-radius: 10px; margin-bottom: 10px;">You\'re ' + Math.round(overshoot) + ' cal over target — here are options to even out.</div>';
+  } else if (overshoot < -200) {
+    html += '<div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 10px;">You\'re comfortably under target — light movement still helps recovery and metabolism.</div>';
+  } else {
+    html += '<div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 10px;">Pick a session to help your goal pace today.</div>';
+  }
+
+  for (const s of suggestions) {
+    const cal = caloriesBurned(w, s.type, s.min);
+    html += '<div class="ex-option"><div class="ex-icon">' + s.icon + '</div><div><div class="ex-name">' + s.label + ' — ' + s.min + ' min</div><div class="ex-detail">' + s.desc + '</div></div><div class="ex-burn">~' + cal + ' cal</div></div>';
+  }
+  document.getElementById("ex-options").innerHTML = html;
+}
+
+function renderLoggedExercise() {
+  const el = document.getElementById("ex-logged");
+  if (!day.exercise.length) { el.innerHTML = ""; return; }
+  let html = '<div class="suggestion-title">Logged today</div>';
+  for (const e of day.exercise) {
+    html += '<div class="meal-eaten" style="background: var(--accent-soft);"><span class="name">' + EX_LABEL[e.type] + ' — ' + e.minutes + ' min</span><span class="cal" style="color: var(--accent);">−' + e.cal + ' cal</span></div>';
+  }
+  el.innerHTML = html;
+}
+
+document.getElementById("ex-log").addEventListener("click", () => {
+  const type = document.getElementById("ex-type").value;
+  const min = parseInt(document.getElementById("ex-minutes").value);
+  if (!min || min < 1) { toast("Enter a duration in minutes."); return; }
+  const cal = caloriesBurned(profile.currentLbs, type, min);
+  day.exercise.push({ type, minutes: min, cal, at: new Date().toISOString() });
+  saveDay();
+  document.getElementById("ex-minutes").value = "";
+  renderLoggedExercise();
+  renderTotals();
+  renderExerciseSuggestions();
+  toast("Logged: " + EX_LABEL[type] + " — burned ~" + cal + " cal");
+});
+
+document.getElementById("w-log").addEventListener("click", () => {
+  const w = parseFloat(document.getElementById("w-input").value);
+  if (!w) return;
+  profile.currentLbs = w;
+  day.weight = w;
+  saveProfile(); saveDay();
+  document.getElementById("w-input").value = "";
+  renderDashboard();
+  toast("Weight updated.");
+});
+
+document.getElementById("edit-profile").addEventListener("click", showSetup);
+
+document.getElementById("reset-day").addEventListener("click", () => {
+  if (!confirm("Clear today's meals and exercise?")) return;
+  day = { meals: {}, exercise: [], weight: day.weight };
+  saveDay();
+  renderDashboard();
+});
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ===============================================================
+   BOOT
+   =============================================================== */
+loadProfile();
+loadDay();
+if (profile) showDashboard();
+else showSetup();
+</script>
+</body>
+</html>
